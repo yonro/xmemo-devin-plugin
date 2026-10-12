@@ -2,7 +2,7 @@
 
 XMemo for Devin is a Devin plugin that connects Devin to the hosted XMemo MCP service at `https://xmemo.dev/mcp` and provides four focused workflows for durable project memory and cross-agent continuity.
 
-> **Release status:** v1.0.0 package candidate. Devin account/session validation and marketplace admission remain separate gates and are not claimed here.
+> **Release status:** v1.0.0-rc.2 development candidate. Devin account/session validation and marketplace admission remain separate gates and are not claimed here.
 
 ## What is included
 
@@ -52,6 +52,23 @@ The official marketplace accepts a third-party plugin as a URL pinned to a full 
 
 Do not open that marketplace pull request until the owner reviews the prepared diff and accepts the marketplace CLA terms.
 
-## License
+## Claude workflow reuse and releases
+
+Checkpoint, Handoff and Resume are reproducible adaptations of MIT-licensed
+Claude workflows pinned in [upstream-lock.json](upstream-lock.json). Original
+sources and the upstream license are preserved under `vendor/claude`.
+Run `python scripts/sync_skills.py` to regenerate, or add `--check` to detect
+drift. Review a new upstream commit, update the vendored sources and their
+SHA-256 digests, then regenerate and test. Do not edit generated skills directly.
+
+The [Devin policy](skills/policy.md) governs capability discovery, personal
+installation, explicit write authorization, source attribution and partial-write
+recovery. No Claude lifecycle hooks or signed client identity are copied.
+
+Version is stored in `VERSION`. The release gate rejects stable versions and
+tag/version mismatches. Enabling GA requires a reviewed policy change backed by
+real Devin evidence. Follow [acceptance steps](docs/acceptance.md).
+
+## License and attribution
 
 MIT, © 2026 Yonro.

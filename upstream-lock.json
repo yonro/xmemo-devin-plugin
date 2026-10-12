@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/yonro/xmemo-claude-plugin",
+  "commit": "5d0d2802daaf431eb31b038511f34a00b625ec9f",
+  "files": {
+    "skills/handoff-work/SKILL.md": "337363bebf0744ff097cd0890a5b31c996abbc4feeb07de28ba8609833915d24",
+    "skills/resume-work/SKILL.md": "76ae4c63fb90d95ce0c0099a8529e5dddf48e2857580b21984fbb3c450b58237",
+    "skills/distill-session/SKILL.md": "dcb30610a0f6cb917faa4f12f22108d024615a3d24ad32bb1389f4b092fcfaca",
+    "skills/memory-steward/references/memory-policy.md": "feb25b82d85a71f5c81199bc1976972f132638f38654996186ecaa3d59b81982"
+  }
+}

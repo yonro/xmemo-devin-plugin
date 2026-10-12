@@ -2,7 +2,7 @@
   "name": "xmemo-devin",
   "displayName": "XMemo for Devin",
   "description": "Durable project memory and cross-agent continuity for Devin through XMemo's hosted MCP service.",
-  "homepage": "https://xmemo.dev/integrations/devin",
+  "homepage": "https://xmemo.dev",
   "repository": "https://github.com/yonro/xmemo-devin-plugin",
   "logo": "logo.png",
   "keywords": ["Essentials", "Development Tools", "Productivity"],

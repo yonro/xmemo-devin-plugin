@@ -12,6 +12,10 @@ def fail(message: str) -> None:
 
 
 def main() -> None:
+    from sync_skills import outputs
+    for path, expected_text in outputs(ROOT).items():
+        if (ROOT / path).read_text(encoding="utf-8") != expected_text:
+            fail("generated skill drift: " + path)
     manifest_path = ROOT / ".devin-plugin" / "plugin.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
     required = {"name", "displayName", "description", "homepage", "repository", "logo", "keywords", "mcpServers"}
@@ -19,7 +23,12 @@ def main() -> None:
         fail(f"manifest keys must be exactly {sorted(required)}")
     if manifest["name"] != "xmemo-devin" or manifest["mcpServers"].get("xmemo", {}).get("url") != "https://xmemo.dev/mcp":
         fail("manifest identity or MCP URL is invalid")
-    if not (ROOT / manifest["logo"]).is_file():
+    if manifest["mcpServers"] != {"xmemo": {"url": "https://xmemo.dev/mcp"}}:
+        fail("MCP configuration must not embed credentials or override identity")
+    logo = (ROOT / manifest["logo"]).resolve()
+    if not logo.is_relative_to(ROOT.resolve()):
+        fail("logo path escapes package")
+    if not logo.is_file():
         fail("manifest logo does not exist")
     if set(manifest["mcpServers"]) != {"xmemo"}:
         fail("manifest must declare exactly one xmemo server")
@@ -33,7 +42,14 @@ def main() -> None:
             fail(f"missing frontmatter: {path}")
         if not re.search(r"(?m)^name:\s+\S+", text) or not re.search(r"(?m)^description:\s+\S+", text):
             fail(f"invalid frontmatter: {path}")
-    tracked = [p for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.parts]
+    for path in [ROOT / "README.md", ROOT / "skills/policy.md", *skills]:
+        for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
+            if "://" in target or target.startswith("#"):
+                continue
+            destination = (path.parent / target.split("#")[0]).resolve()
+            if not destination.is_relative_to(ROOT.resolve()) or not destination.is_file():
+                fail("broken or escaping reference: " + target)
+    tracked = [p for p in ROOT.rglob("*") if p.is_file() and not set(p.parts) & {".git", "__pycache__", "dist"}]
     secret = re.compile(r"(?i)(gh[pousr]_[A-Za-z0-9_\-]{20,}|sk-[A-Za-z0-9]{20,}|xox[baprs]-|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)")
     for path in tracked:
         if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif"}:

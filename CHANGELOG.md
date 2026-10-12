@@ -1,6 +1,13 @@
 # Changelog
 
-## [1.0.0] - 2026-10-12
+## [1.0.0-rc.2] - Unreleased
+
+- Adapt pinned Claude checkpoint, handoff and resume workflows reproducibly.
+- Add Devin capability, consent, provenance and partial-write safety policy.
+- Reject stable releases, version mismatches, source and generated-skill drift.
+- Add negative package tests and a real Devin acceptance procedure.
+
+## [1.0.0-rc.1] - 2026-10-12
 
 - Added Devin plugin manifest for the hosted XMemo MCP endpoint.
 - Added Recall, Checkpoint, Handoff, and Resume skills.

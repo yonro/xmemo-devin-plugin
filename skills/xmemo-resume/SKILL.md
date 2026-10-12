@@ -1,10 +1,55 @@
 ---
 name: xmemo-resume
-description: Use when Devin starts a new session, resumes interrupted work, or takes over a task from another agent.
+description: Resume a project or unfinished task from XMemo by recovering the latest verified checkpoint, relevant decisions, TODOs, blockers, and exact next action. Use at the start of a new Devin session, after an interruption, or when continuing work previously handled by another compatible agent. Reconcile saved state with current evidence before acting.
 ---
 
-# XMemo Resume
+# Resume Work with XMemo
 
-Retrieve a bounded restart context with `recall_context`, or an exact project pack with `get_project_context` when an authorized project ID is known. Reconcile every remembered claim against the current checkout, Git history, tests, CI, and service state before acting.
+Reconstruct actionable continuity without replaying chat history. Follow **identify → recover → reconcile → brief → continue → checkpoint**.
 
-Return the latest verified state, stale or conflicting items, active blockers, and one next action. If no trustworthy checkpoint exists, say so and inspect the live workspace. Do not write a new checkpoint simply because a session began.
+## 1. Identify the work precisely
+
+Establish the project, task, artifact, branch, environment, or authorized scope. If several candidates match, present the candidates instead of guessing.
+
+## 2. Recover the minimum complete context
+
+Prefer `get_project_context` for a known project and `recall_context` for a task-oriented pack. Add `search_memory`, pending decisions, or `todo` reads only when needed to close a specific gap. Recover:
+
+- objective and acceptance criteria;
+- latest verified checkpoint;
+- completed work not to repeat;
+- settled and pending decisions;
+- relevant constraints and artifacts;
+- open actions, blocker, and exact next action.
+
+## 3. Reconcile before trusting
+
+Compare the recovered state with the live workspace, newer evidence, and the user's current correction. Mark saved statements as current, stale, conflicting, or unverified. Never continue from a checkpoint whose identity or scope is uncertain.
+
+## 4. Produce a deterministic Resume Brief
+
+Return:
+
+1. **Objective**
+2. **Verified current state**
+3. **Completed work not to repeat**
+4. **Active decisions and constraints**
+5. **Open TODOs**
+6. **Blocker or required input**
+7. **Exact next action**
+8. **Evidence and artifact references**
+
+Clearly separate remembered context from freshly verified evidence.
+
+## 5. Continue from the next action
+
+If the user asked to continue and the action is safe and in scope, execute it without repeating completed work. If blocked, name the missing authority, evidence, or external change.
+
+## 6. Refresh continuity at a material checkpoint
+
+Use `update_state` after verified progress, a new blocker, or a meaningful pause. Use `record_event` only for a significant milestone or transfer, `todo` for concrete future actions, and `remember` for durable knowledge. Do not create a checkpoint every turn.
+
+Resume restores useful context, not the original Devin conversation. Return a receipt for any XMemo updates.
+
+
+Read [Devin safety and tool routing](../policy.md) before any operation. That policy governs authorization and capability availability for every step above.
