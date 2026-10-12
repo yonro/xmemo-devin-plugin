@@ -51,9 +51,9 @@ observed product result. BLOCKED means acceptance remains incomplete.
 | Scope config | Preserve DCR compatibility | RUNTIME Cloud rejected scopes-only override: `OAuth scopes require an OAuth client ID`; removed override |
 | Actual scope | Review actual approved access | BLOCKED: current flow requests memory and knowledge read/write; no least-privilege claim |
 | Cloud ownership | Personal authorization, no shared Org Access | RUNTIME Personal installation pass |
-| Cloud indexing | Parse skills and MCP after repository fetch | RUNTIME pass for `8d6fb98`; new manifest reindex must be verified separately |
+| Cloud indexing | Parse skills and MCP after repository fetch | RUNTIME initial pass for `8d6fb98`; reindex of fix `244a581` completed and OAuth consent opened |
 | CLI install | CLI sign-in then local installation | RUNTIME pass on 3000.10.48: v1.0.0-rc.2, four namespaced skills and one MCP; plugins list confirms |
-| Login separation | Cloud connection does not prove CLI connection | Documented; neither MCP consent completed |
+| Login separation | Cloud connection does not prove CLI connection | RUNTIME both reached separate consent pages; neither MCP consent completed |
 | Discovery | Inspect actual tools/list and schemas | BLOCKED by OAuth; tool names in skills remain conditional |
 | Identity | Server-derived user/tenant attribution | Policy inspected; actual server identity BLOCKED |
 | Read/write | Exact synthetic fact and scoped checkpoint | BLOCKED; zero authenticated test writes so far |
@@ -92,3 +92,10 @@ Follow [acceptance.md](acceptance.md) after login and scope review. Record the
 exact installed revision, host version, test identifiers and sanitized result
 for each step. Missing consent, discovery, model behavior, isolation or revocation
 evidence blocks a claim of full adaptation and the stable release.
+
+The latest tested implementation is `244a58132d4be7ee8a007d54cf888c3247837d6d`.
+Its [CI run](https://github.com/yonro/xmemo-devin-plugin/actions/runs/38275749708)
+passed. Cloud consent shows callback `api.devin.ai`; CLI consent shows
+`localhost`. Both show four scopes, and both were left unapproved pending the
+user's action-time authorization. These are evidence of successful initiation,
+not evidence of completed OAuth or safe runtime writes.

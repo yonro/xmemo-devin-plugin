@@ -21,8 +21,10 @@
 - CLI browser sign-in and `plugins install --local --yes` succeeded for rc.2. `plugins list` confirmed the installed version and `mcp list` exposed xmemo.
 - Cloud reindex of `224e11f` completed, but Connect MCP failed with `OAuth scopes require an OAuth client ID`. The scopes-only override was therefore removed to retain DCR compatibility. This failed experiment is not runtime acceptance.
 - Commit `224e11f` passed GitHub Actions run `38275435365` before the runtime scope incompatibility was found; a CI pass alone did not catch it.
+- Fix commit `244a58132d4be7ee8a007d54cf888c3247837d6d` passed six local unit tests, the official template validator and GitHub Actions run `38275749708`. The CLI installed this revision successfully. Cloud reindex completed and Connect MCP reached the consent page again, confirming the activation error was resolved.
+- Both actual consent pages displayed memory read/write and knowledge read/write. Cloud's callback host was `api.devin.ai`; CLI's was `localhost`. Both remained at the approval step pending user confirmation. No token exchange, authenticated tool call or synthetic write is claimed.
 - The unmodified official template validator at `dd46026e57a228050b34c25961cdf9b82d5415bd` passed with this package staged under `plugins/xmemo-devin`. This validator checks structure, not OAuth or model behavior.
-- See [the itemized audit](devin-compatibility.md). Later manifest changes require Cloud reindexing; earlier install evidence does not prove those changes loaded.
+- See [the itemized audit](devin-compatibility.md). Initial installation, the failed scopes-only experiment and the subsequent successful consent initiation are separate evidence points.
 
 ## BLOCKED
 
