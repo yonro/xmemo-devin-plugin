@@ -48,11 +48,11 @@ observed product result. BLOCKED means acceptance remains incomplete.
 | Credentials | No embedded token, header or client secret | STATIC pass; forbidden config negative test; regex is not a complete security audit |
 | OAuth client | Use host DCR, do not impersonate Claude | RUNTIME Cloud and CLI authorization initiation observed |
 | PKCE/resource | S256; resource is MCP URL | RUNTIME initiation pass; token exchange BLOCKED |
-| Scope config | Memory read/write array | RUNTIME CLI writes supported array; manifest requests it |
-| Actual scope | Declared scopes must match approved access | BLOCKED: CLI URL also requests knowledge read/write; Cloud update needs separate check |
+| Scope config | Preserve DCR compatibility | RUNTIME Cloud rejected scopes-only override: `OAuth scopes require an OAuth client ID`; removed override |
+| Actual scope | Review actual approved access | BLOCKED: current flow requests memory and knowledge read/write; no least-privilege claim |
 | Cloud ownership | Personal authorization, no shared Org Access | RUNTIME Personal installation pass |
 | Cloud indexing | Parse skills and MCP after repository fetch | RUNTIME pass for `8d6fb98`; new manifest reindex must be verified separately |
-| CLI install | CLI sign-in then local installation | BLOCKED by CLI login; Desktop installation alone does not prove CLI authentication |
+| CLI install | CLI sign-in then local installation | RUNTIME pass on 3000.10.48: v1.0.0-rc.2, four namespaced skills and one MCP; plugins list confirms |
 | Login separation | Cloud connection does not prove CLI connection | Documented; neither MCP consent completed |
 | Discovery | Inspect actual tools/list and schemas | BLOCKED by OAuth; tool names in skills remain conditional |
 | Identity | Server-derived user/tenant attribution | Policy inspected; actual server identity BLOCKED |

@@ -3,7 +3,7 @@
 ## [1.0.0-rc.2] - Unreleased
 
 - Declare the supported manifest version/license and validate version parity.
-- Request memory-only OAuth scopes; record the real CLI scope expansion as unresolved.
+- Keep DCR-compatible URL-only MCP config after Cloud rejected a scopes-only override; document actual requested permissions.
 - Move mandatory capability and authorization instructions before generated workflows.
 - Add official template validation evidence and itemized Cloud/CLI compatibility audit.
 

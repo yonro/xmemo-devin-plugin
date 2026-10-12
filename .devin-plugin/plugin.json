@@ -10,8 +10,7 @@
   "keywords": ["Essentials", "Development Tools", "Productivity"],
   "mcpServers": {
     "xmemo": {
-      "url": "https://xmemo.dev/mcp",
-      "oauthScopes": ["memory:read", "memory:write"]
+      "url": "https://xmemo.dev/mcp"
     }
   }
 }

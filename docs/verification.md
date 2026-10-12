@@ -18,12 +18,15 @@
 - Cloud installed the repository at Personal scope and indexed four skills and one HTTP MCP using commit `8d6fb98bc4064cb8f41cb17944f59be6b2c7d9c8`.
 - Connect MCP reached XMemo login with Devin's HTTPS callback, PKCE S256 and the MCP resource URL. This proves initiation, not completed consent or authenticated tool access.
 - Installed CLI `3000.10.48 (fcf7ba39)` generated an isolated local config with `oauthScopes` as a string array. Its OAuth initiation still requested both memory and knowledge read/write. The pending probe was stopped without granting access.
+- CLI browser sign-in and `plugins install --local --yes` succeeded for rc.2. `plugins list` confirmed the installed version and `mcp list` exposed xmemo.
+- Cloud reindex of `224e11f` completed, but Connect MCP failed with `OAuth scopes require an OAuth client ID`. The scopes-only override was therefore removed to retain DCR compatibility. This failed experiment is not runtime acceptance.
+- Commit `224e11f` passed GitHub Actions run `38275435365` before the runtime scope incompatibility was found; a CI pass alone did not catch it.
 - The unmodified official template validator at `dd46026e57a228050b34c25961cdf9b82d5415bd` passed with this package staged under `plugins/xmemo-devin`. This validator checks structure, not OAuth or model behavior.
 - See [the itemized audit](devin-compatibility.md). Later manifest changes require Cloud reindexing; earlier install evidence does not prove those changes loaded.
 
 ## BLOCKED
 
-- Completed OAuth consent, real `tools/list`, authorized recall/write, revocation and cross-session resume still require user login and an authorized synthetic test session. CLI plugin installation also requires CLI account login (the installed CLI reported not logged in).
+- Completed OAuth consent, real `tools/list`, authorized recall/write, revocation and cross-session resume still require user authorization and a synthetic test session.
 - Actual scope narrowing remains unresolved; declared scopes are not evidence of granted scopes.
 - User/workspace isolation and revocation require separately authorized synthetic test identities. Follow [acceptance.md](acceptance.md); server metadata alone is insufficient.
 

@@ -28,7 +28,7 @@ def main() -> None:
         fail("manifest version must match VERSION and use semver")
     if manifest["license"] != "MIT":
         fail("manifest license must match the distributed MIT license")
-    if manifest["mcpServers"] != {"xmemo": {"url": "https://xmemo.dev/mcp", "oauthScopes": ["memory:read", "memory:write"]}}:
+    if manifest["mcpServers"] != {"xmemo": {"url": "https://xmemo.dev/mcp"}}:
         fail("MCP configuration must not embed credentials or override identity")
     logo = (ROOT / manifest["logo"]).resolve()
     if not logo.is_relative_to(ROOT.resolve()):

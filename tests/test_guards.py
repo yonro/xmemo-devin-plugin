@@ -39,7 +39,7 @@ class Guards(unittest.TestCase):
                 if mutation == "version":
                     data["version"] = "9.0.0"
                 if mutation == "scopes":
-                    data["mcpServers"]["xmemo"]["oauthScopes"].append("knowledge:write")
+                    data["mcpServers"]["xmemo"]["oauthScopes"] = ["memory:read", "memory:write"]
                 if mutation == "license":
                     data["license"] = "UNLICENSED"
                 recall = root / "skills/xmemo-recall/SKILL.md"
