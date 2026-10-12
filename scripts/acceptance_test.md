@@ -1,6 +1,6 @@
 # XMemo for Devin - Acceptance Test Guide
 
-**Plugin SHA:** `b15681d`
+**Plugin SHA:** `bd0b08e`
 **Devin Version:** `devin 3000.11.3 (9c803229faa4)`
 **Test Date:** `2026-10-13 (Asia/Tokyo)`
 
@@ -17,10 +17,10 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 | 5. Session resume & Git check | **PASS** | A synthetic checkpoint was saved through Devin CLI, then an empty Git commit `3722ddb3e989d7276a7a09cbf18eeb26cbd000df` was created. A new Devin CLI resume run marked the checkpoint **STALE**, reported the current commit and clean working tree, identified the exact discrepancy, and requested reconciliation instead of repeating outdated state. |
 | 6. Handoff | **PARTIAL** | Package exposes `xmemo-handoff`; two summary-only CLI invocations were started with explicit zero-write instructions but timed out before returning a verifiable package. Devin CLI logs identify the Cloud bridge failure as `out_of_quota` / organization billing state, not an XMemo MCP response error. Partial-write semantics remain unverified. |
 | 7. User & workspace isolation | **PASS** | A second XMemo API key created a synthetic record under a separate account. The active Devin account returned `NOT_FOUND` for an exact recall and its cross-account `forget` attempt was denied. The second-account record was then soft-deleted with the second account, and no credentials were written to the repository. |
-| 8. Revocation & reconnection | **PARTIAL** | Local credential revocation was verified (`devin mcp logout xmemo` removed OAuth credentials). Provider-side grant revocation and a fresh post-revocation consent were not independently verifiable from the available XMemo account controls. |
+| 8. Revocation & reconnection | **PASS** | After provider-side revocation, the old Devin refresh token was rejected with `invalid_grant` and the MCP connection reported `invalid_token`. Local XMemo credentials were removed, a fresh consent flow completed successfully, and a new Devin CLI `get_mcp_identity` call returned `AUTH_OK`. |
 | 9. Cleanup & screenshots | **PASS** | Both exact synthetic records were soft-deleted and the scoped recall no longer returned either record. No credentials were added to the repository; package validation, unit tests, and CI passed. OAuth consent and Cloud plugin detail screenshots were captured in the task evidence directory. |
 
-**Overall result:** **BLOCKED for GA/marketplace submission** until handoff and provider-side revocation/reconnection have complete evidence.
+**Overall result:** **BLOCKED for GA/marketplace submission** until handoff has complete evidence and the Devin tool-wrapper compatibility issue is resolved or formally accepted.
 
 ### Verified runtime facts
 
@@ -31,6 +31,7 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 - `xmemo-resume` correctly marked the synthetic checkpoint stale after Git commit `3722ddb` and produced a reconciliation report without writing records.
 - Dual-account isolation was verified: cross-account recall returned no match and cross-account mutation was denied.
 - Devin CLI logs attribute handoff timeout to the Devin Cloud bridge's organization quota/billing state; the logs do not show an XMemo server handoff failure.
+- OAuth revocation and reconnection were verified end to end: the old refresh token failed, fresh consent succeeded, and a new identity call returned `AUTH_OK`.
 - Synthetic cleanup used recoverable `soft_delete` only for the exact semantic and working-state IDs created by this run.
 
 ## Prerequisites
@@ -325,7 +326,7 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 | 5. Session Resume | PARTIAL | Cross-process recall verified; Git staleness flow incomplete |
 | 6. Handoff | PARTIAL | Skill present; verifiable package/partial-write evidence incomplete |
 | 7. Isolation | PASS | Separate synthetic record was invisible and immutable from the active Devin account |
-| 8. Revocation | PARTIAL | Local logout verified; provider revocation unavailable |
+| 8. Revocation | PASS | Provider revocation rejected the old token; fresh consent and identity succeeded |
 | 9. Cleanup | PASS | Exact synthetic records soft-deleted and checked |
 
 **Overall Result:** BLOCKED
@@ -344,10 +345,10 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 
 ## Notes for Marketplace PR
 
-- Plugin commit SHA: `b15681d`
+- Plugin commit SHA: `bd0b08e`
 - Tested Devin version: `3000.11.3 (9c803229faa4)`
 - Test date: `2026-10-13`
-- All test cases passed: **No; 6 and 8 remain incomplete and 3 is partial**
+- All test cases passed: **No; 6 remains incomplete and 3 is partial**
 - Screenshots attached: **Yes, task evidence directory**
 - Cleanup verified: **Yes, exact synthetic records soft-deleted**
 
