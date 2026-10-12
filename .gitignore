@@ -1,6 +1,39 @@
-# Generated artifacts and local credentials
+# Python caches and test output
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Build and package output
+dist/
+build/
+*.egg-info/
+
+# Local credentials and environment files
 .env
 .env.*
-dist/
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Local logs, reports, and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+reports/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
