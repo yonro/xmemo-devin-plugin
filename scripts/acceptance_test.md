@@ -1,7 +1,7 @@
 # XMemo for Devin - Acceptance Test Guide
 
-**Plugin SHA:** `e0e5048`
-**Devin Version:** `devin 3000.10.48 (fcf7ba39)`
+**Plugin SHA:** `264bfdc`
+**Devin Version:** `devin 3000.11.3 (9c803229faa4)`
 **Test Date:** `2026-10-13 (Asia/Tokyo)`
 
 ## Executed acceptance record
@@ -12,10 +12,10 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 |---|---|---|
 | 1. Installation | **PASS** | Local install reported `xmemo v1.0.0-rc.2`; `devin plugins info xmemo` showed four skills and MCP `xmemo`. Devin Cloud Personal showed **Xmemo Installed · 4 skills, 1 MCP**; details showed version `1.0.0-rc.2`, developer `XMemo`, license `MIT`, MCP enabled. |
 | 2. Activation & OAuth | **PASS** | CLI OAuth consent and Devin Cloud callback both displayed exactly `memory:read`, `memory:write`, `knowledge:read`, `knowledge:write`; Personal scope was used. CLI credentials were later removed with `devin mcp logout xmemo` for cleanup. |
-| 3. Tool discovery & identity | **PARTIAL** | Devin Cloud's built-in MCP test completed successfully and discovered 34 enabled tools, including `get_mcp_identity`, `remember`, `update_state`, `recall`, `recall_context`, `read_memory`, and the XMemo HTML resources. The CLI discovery also confirmed `search_memory` and `get_state` are absent. The generic `mcp_call_tool` wrapper emitted malformed calls missing `server_name`; direct tool calls worked. A post-cleanup identity call could not complete because the CLI token had been intentionally logged out. |
+| 3. Tool discovery & identity | **PARTIAL** | Devin Cloud's built-in MCP test completed successfully and discovered 34 enabled tools, including `get_mcp_identity`, `remember`, `update_state`, `recall`, `recall_context`, `read_memory`, and the XMemo HTML resources. A fresh Devin CLI `get_mcp_identity` call also succeeded and returned the public connection surface. The CLI discovery confirmed `search_memory` and `get_state` are absent. The generic `mcp_call_tool` wrapper emitted malformed calls missing `server_name`; direct tool calls worked. |
 | 4. Read & write | **PASS** | Direct Devin `remember` wrote the synthetic amber-lighthouse fact; `update_state` returned receipt `3913d1b6-49e0-4a2d-ae46-ed78e023fdb1`; a separate Devin process recalled the fact and checkpoint. The canonical semantic memory was `bcbc0b55-180a-4df8-88d2-d38fda686795`. |
-| 5. Session resume & Git check | **PARTIAL** | Cross-process recall was verified. A complete skill-driven Git staleness reconciliation was not completed because the installed CLI session lost its OAuth token during cleanup; no stale-state claim is made. |
-| 6. Handoff | **PARTIAL** | Package exposes `xmemo-handoff`; summary-only invocation was started with a no-write instruction, but the CLI session did not return a verifiable package before timeout. Partial-write semantics remain unverified. |
+| 5. Session resume & Git check | **PASS** | A synthetic checkpoint was saved through Devin CLI, then an empty Git commit `3722ddb3e989d7276a7a09cbf18eeb26cbd000df` was created. A new Devin CLI resume run marked the checkpoint **STALE**, reported the current commit and clean working tree, identified the exact discrepancy, and requested reconciliation instead of repeating outdated state. |
+| 6. Handoff | **PARTIAL** | Package exposes `xmemo-handoff`; two summary-only CLI invocations were started with explicit zero-write instructions but timed out before returning a verifiable package. Partial-write semantics remain unverified. |
 | 7. User & workspace isolation | **BLOCKED** | A second Devin/XMemo account was not available in this environment, so no cross-user access attempt was performed. |
 | 8. Revocation & reconnection | **PARTIAL** | Local credential revocation was verified (`devin mcp logout xmemo` removed OAuth credentials). Provider-side grant revocation and a fresh post-revocation consent were not independently verifiable from the available XMemo account controls. |
 | 9. Cleanup & screenshots | **PASS** | Both exact synthetic records were soft-deleted and the scoped recall no longer returned either record. No credentials were added to the repository; package validation, unit tests, and CI passed. OAuth consent and Cloud plugin detail screenshots were captured in the task evidence directory. |
@@ -26,7 +26,9 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 
 - Devin Cloud's built-in MCP validation successfully connected to `https://xmemo.dev/mcp` and discovered 34 enabled tools.
 - Direct MCP calls are usable in Devin; the generic `mcp_call_tool` compatibility wrapper is currently unreliable because it omits `server_name` for some calls.
+- A fresh Devin CLI identity call succeeded against the authorized XMemo connection.
 - The live server surface uses `recall`/`recall_context` instead of the guide's legacy `search_memory`/`get_state` names.
+- `xmemo-resume` correctly marked the synthetic checkpoint stale after Git commit `3722ddb` and produced a reconciliation report without writing records.
 - Synthetic cleanup used recoverable `soft_delete` only for the exact semantic and working-state IDs created by this run.
 
 ## Prerequisites
@@ -339,8 +341,8 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 
 ## Notes for Marketplace PR
 
-- Plugin commit SHA: `200d7e2`
-- Tested Devin version: `3000.10.48 (fcf7ba39)`
+- Plugin commit SHA: `264bfdc`
+- Tested Devin version: `3000.11.3 (9c803229faa4)`
 - Test date: `2026-10-13`
 - All test cases passed: **No; 7–8 are incomplete and 3, 5–6 are partial**
 - Screenshots attached: **Yes, task evidence directory**
