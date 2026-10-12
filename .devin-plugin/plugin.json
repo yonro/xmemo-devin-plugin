@@ -1,11 +1,13 @@
 {
-  "name": "xmemo-devin",
+  "name": "xmemo",
   "version": "1.0.0-rc.2",
-  "license": "MIT",
-  "displayName": "XMemo for Devin",
   "description": "Durable project memory and cross-agent continuity for Devin through XMemo's hosted MCP service.",
+  "author": {
+    "name": "Yonro"
+  },
   "homepage": "https://xmemo.dev",
   "repository": "https://github.com/yonro/xmemo-devin-plugin",
+  "license": "MIT",
   "logo": "logo.png",
   "keywords": ["Essentials", "Development Tools", "Productivity"],
   "mcpServers": {

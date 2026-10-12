@@ -18,16 +18,20 @@ def main() -> None:
             fail("generated skill drift: " + path)
     manifest_path = ROOT / ".devin-plugin" / "plugin.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
-    required = {"name", "version", "license", "displayName", "description", "homepage", "repository", "logo", "keywords", "mcpServers"}
+    required = {"name", "version", "description", "author", "homepage", "repository", "license", "logo", "keywords", "mcpServers"}
     if set(manifest) != required:
         fail(f"manifest keys must be exactly {sorted(required)}")
-    if manifest["name"] != "xmemo-devin" or manifest["mcpServers"].get("xmemo", {}).get("url") != "https://xmemo.dev/mcp":
+    if manifest["name"] != "xmemo" or manifest["mcpServers"].get("xmemo", {}).get("url") != "https://xmemo.dev/mcp":
         fail("manifest identity or MCP URL is invalid")
+    if not re.fullmatch(r"[a-z0-9]+(?:[.-][a-z0-9]+)*", manifest["name"]):
+        fail("manifest name must be lowercase alphanumeric with single - or . separators")
     version = (ROOT / "VERSION").read_text().strip()
     if manifest["version"] != version or not re.fullmatch(r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?", version):
         fail("manifest version must match VERSION and use semver")
     if manifest["license"] != "MIT":
         fail("manifest license must match the distributed MIT license")
+    if not isinstance(manifest.get("author"), dict) or "name" not in manifest["author"]:
+        fail("manifest author must be an object with a name field")
     if manifest["mcpServers"] != {"xmemo": {"url": "https://xmemo.dev/mcp"}}:
         fail("MCP configuration must not embed credentials or override identity")
     logo = (ROOT / manifest["logo"]).resolve()

@@ -19,13 +19,13 @@ The plugin contains no memory backend and no credentials. Devin handles MCP OAut
 devin plugins install --local ./xmemo-devin-plugin
 ```
 
-Run `devin auth login` first if the CLI is not signed in. `--local` installs on this device; omitting it can sync a personal installation to Cloud. Start a new session after installation and use `devin mcp list` to find the actual installed server name, then `devin mcp login <server-name> --scopes memory:read,memory:write`.
+Run `devin auth login` first if the CLI is not signed in. `--local` installs on this device; omitting it can sync a personal installation to Cloud. Start a new session after installation and use `devin mcp list` to find the actual installed server name, then `devin mcp login <server-name> --scopes memory:read,memory:write`. The server name is `xmemo`.
 
 For Cloud, open **Customize > Plugins > Add plugin > From repository**, enter `https://github.com/yonro/xmemo-devin-plugin.git`, and install in **Personal** scope. Open its MCP connection and choose **Connect MCP**. Cloud and CLI authorization are separate. Inspect the account and consent screen before approving.
 
 The manifest uses dynamic client registration without a fixed client ID or scope override. Cloud rejects `oauthScopes` without `oauthClientId`; the same override in CLI 3000.10.48 still produced an authorization URL with memory and knowledge read/write scopes. Scope narrowing is therefore **not supported by this tested configuration**. Review all four requested permissions before approving. No credentials are bundled. CLI logout clears local credentials; provider-side revocation must be tested separately.
 
-Skills use namespaced commands such as `/xmemo-devin:xmemo-recall`. See the [official compatibility audit](docs/devin-compatibility.md) for supported surfaces, evidence and remaining blockers.
+Skills use namespaced commands such as `/xmemo:xmemo-recall`.
 
 ## Security boundaries
 
