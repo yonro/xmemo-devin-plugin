@@ -19,7 +19,13 @@ The plugin contains no memory backend and no credentials. Devin handles MCP OAut
 devin plugins install --local ./xmemo-devin-plugin
 ```
 
-Start a new Devin session after installation. When Devin activates the MCP connection, authorize XMemo in the browser for the scopes requested by the service. The repository cannot complete an OAuth login or a Devin Cloud installation on your behalf.
+Run `devin auth login` first if the CLI is not signed in. `--local` installs on this device; omitting it can sync a personal installation to Cloud. Start a new session after installation and use `devin mcp list` to find the actual installed server name, then `devin mcp login <server-name> --scopes memory:read,memory:write`.
+
+For Cloud, open **Customize > Plugins > Add plugin > From repository**, enter `https://github.com/yonro/xmemo-devin-plugin.git`, and install in **Personal** scope. Open its MCP connection and choose **Connect MCP**. Cloud and CLI authorization are separate. Inspect the account and consent screen before approving.
+
+The manifest requests memory read/write scopes. In a real CLI 3000.10.48 probe, the authorization URL still included knowledge read/write scopes despite that setting. Scope narrowing is therefore **not verified**. Do not approve broader access without reviewing it. No credentials are bundled. CLI logout clears local credentials; provider-side revocation must be tested separately.
+
+Skills use namespaced commands such as `/xmemo-devin:xmemo-recall`. See the [official compatibility audit](docs/devin-compatibility.md) for supported surfaces, evidence and remaining blockers.
 
 ## Security boundaries
 
@@ -65,7 +71,7 @@ The [Devin policy](skills/policy.md) governs capability discovery, personal
 installation, explicit write authorization, source attribution and partial-write
 recovery. No Claude lifecycle hooks or signed client identity are copied.
 
-Version is stored in `VERSION`. The release gate rejects stable versions and
+Version is stored in `VERSION` and mirrored in the manifest, as supported by Devin. Validation rejects drift. The release gate rejects stable versions and
 tag/version mismatches. Enabling GA requires a reviewed policy change backed by
 real Devin evidence. Follow [acceptance steps](docs/acceptance.md).
 

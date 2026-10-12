@@ -18,12 +18,17 @@ def main() -> None:
             fail("generated skill drift: " + path)
     manifest_path = ROOT / ".devin-plugin" / "plugin.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
-    required = {"name", "displayName", "description", "homepage", "repository", "logo", "keywords", "mcpServers"}
+    required = {"name", "version", "license", "displayName", "description", "homepage", "repository", "logo", "keywords", "mcpServers"}
     if set(manifest) != required:
         fail(f"manifest keys must be exactly {sorted(required)}")
     if manifest["name"] != "xmemo-devin" or manifest["mcpServers"].get("xmemo", {}).get("url") != "https://xmemo.dev/mcp":
         fail("manifest identity or MCP URL is invalid")
-    if manifest["mcpServers"] != {"xmemo": {"url": "https://xmemo.dev/mcp"}}:
+    version = (ROOT / "VERSION").read_text().strip()
+    if manifest["version"] != version or not re.fullmatch(r"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?", version):
+        fail("manifest version must match VERSION and use semver")
+    if manifest["license"] != "MIT":
+        fail("manifest license must match the distributed MIT license")
+    if manifest["mcpServers"] != {"xmemo": {"url": "https://xmemo.dev/mcp", "oauthScopes": ["memory:read", "memory:write"]}}:
         fail("MCP configuration must not embed credentials or override identity")
     logo = (ROOT / manifest["logo"]).resolve()
     if not logo.is_relative_to(ROOT.resolve()):
@@ -42,6 +47,11 @@ def main() -> None:
             fail(f"missing frontmatter: {path}")
         if not re.search(r"(?m)^name:\s+\S+", text) or not re.search(r"(?m)^description:\s+\S+", text):
             fail(f"invalid frontmatter: {path}")
+        frontmatter = text.split("---", 2)[1]
+        if not re.search(r"(?m)^name: " + re.escape(path.parent.name) + r"$", frontmatter):
+            fail(f"skill name must match directory: {path}")
+        if "allowed-tools:" in frontmatter:
+            fail("skills must not implicitly auto-approve tools")
     for path in [ROOT / "README.md", ROOT / "skills/policy.md", *skills]:
         for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
             if "://" in target or target.startswith("#"):

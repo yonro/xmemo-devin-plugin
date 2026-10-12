@@ -1,5 +1,7 @@
 {
   "name": "xmemo-devin",
+  "version": "1.0.0-rc.2",
+  "license": "MIT",
   "displayName": "XMemo for Devin",
   "description": "Durable project memory and cross-agent continuity for Devin through XMemo's hosted MCP service.",
   "homepage": "https://xmemo.dev",
@@ -8,7 +10,8 @@
   "keywords": ["Essentials", "Development Tools", "Productivity"],
   "mcpServers": {
     "xmemo": {
-      "url": "https://xmemo.dev/mcp"
+      "url": "https://xmemo.dev/mcp",
+      "oauthScopes": ["memory:read", "memory:write"]
     }
   }
 }

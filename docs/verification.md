@@ -13,9 +13,18 @@
 - `https://xmemo.dev/.well-known/oauth-authorization-server` returned HTTP 200 and advertised authorization, token, registration, and revocation endpoints with PKCE S256 support on 2026-10-12.
 - `https://xmemo.dev/mcp` returned HTTP 401 without an access token on 2026-10-12, which is consistent with a protected endpoint.
 
+## REAL RUNTIME PROGRESS (2026-10-13)
+
+- Cloud installed the repository at Personal scope and indexed four skills and one HTTP MCP using commit `8d6fb98bc4064cb8f41cb17944f59be6b2c7d9c8`.
+- Connect MCP reached XMemo login with Devin's HTTPS callback, PKCE S256 and the MCP resource URL. This proves initiation, not completed consent or authenticated tool access.
+- Installed CLI `3000.10.48 (fcf7ba39)` generated an isolated local config with `oauthScopes` as a string array. Its OAuth initiation still requested both memory and knowledge read/write. The pending probe was stopped without granting access.
+- The unmodified official template validator at `dd46026e57a228050b34c25961cdf9b82d5415bd` passed with this package staged under `plugins/xmemo-devin`. This validator checks structure, not OAuth or model behavior.
+- See [the itemized audit](devin-compatibility.md). Later manifest changes require Cloud reindexing; earlier install evidence does not prove those changes loaded.
+
 ## BLOCKED
 
-- Devin installation, MCP activation, OAuth consent, real `tools/list`, authorized recall, authorized write, revocation, and cross-session resume require a Devin account/session and user authorization not available to this workspace.
+- Completed OAuth consent, real `tools/list`, authorized recall/write, revocation and cross-session resume still require user login and an authorized synthetic test session. CLI plugin installation also requires CLI account login (the installed CLI reported not logged in).
+- Actual scope narrowing remains unresolved; declared scopes are not evidence of granted scopes.
 - User/workspace isolation and revocation require separately authorized synthetic test identities. Follow [acceptance.md](acceptance.md); server metadata alone is insufficient.
 
 ## NOT STARTED

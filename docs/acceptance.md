@@ -1,6 +1,6 @@
 # Real Devin acceptance
 
-Status: BLOCKED pending an authenticated Devin session. Static validation does
+Status: PARTIAL: Cloud installation passed; authenticated MCP acceptance is blocked. Static validation does
 not establish runtime acceptance. Record plugin SHA, Devin version, date and
 redacted evidence for each case. Never commit tokens or personal memory content.
 

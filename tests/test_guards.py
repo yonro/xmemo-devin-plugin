@@ -26,7 +26,7 @@ class Guards(unittest.TestCase):
             check("v1.0.0-rc.1", "1.0.0-rc.2")
 
     def test_reject_mutations(self):
-        for mutation in ["credential", "logo_escape", "broken_link", "skill_drift", "source_drift"]:
+        for mutation in ["credential", "logo_escape", "broken_link", "skill_drift", "source_drift", "version", "scopes", "license", "auto_approve", "skill_name"]:
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp) / "package"
                 shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns(".git", "__pycache__", "dist"))
@@ -36,6 +36,17 @@ class Guards(unittest.TestCase):
                     data["mcpServers"]["xmemo"]["headers"] = {"Authorization": "Bearer synthetic"}
                 if mutation == "logo_escape":
                     data["logo"] = "../logo.png"
+                if mutation == "version":
+                    data["version"] = "9.0.0"
+                if mutation == "scopes":
+                    data["mcpServers"]["xmemo"]["oauthScopes"].append("knowledge:write")
+                if mutation == "license":
+                    data["license"] = "UNLICENSED"
+                recall = root / "skills/xmemo-recall/SKILL.md"
+                if mutation == "auto_approve":
+                    recall.write_text(recall.read_text().replace("name: xmemo-recall", "allowed-tools: '*'\nname: xmemo-recall"))
+                if mutation == "skill_name":
+                    recall.write_text(recall.read_text().replace("name: xmemo-recall", "name: wrong"))
                 manifest.write_text(json.dumps(data))
                 targets = {"broken_link": "README.md", "skill_drift": "skills/xmemo-handoff/SKILL.md", "source_drift": "vendor/claude/skills/handoff-work/SKILL.md"}
                 if mutation in targets:
