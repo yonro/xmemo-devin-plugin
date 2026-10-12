@@ -1,6 +1,6 @@
 # XMemo for Devin - Acceptance Test Guide
 
-**Plugin SHA:** `8369d9981da82ac132fbaf0c5db148464a753e8d`
+**Plugin SHA:** `e0e5048`
 **Devin Version:** `devin 3000.10.48 (fcf7ba39)`
 **Test Date:** `2026-10-13 (Asia/Tokyo)`
 
@@ -10,7 +10,7 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 
 | Step | Result | Evidence |
 |---|---|---|
-| 1. Installation | **PASS** | Local install reported `xmemo v1.0.0-rc.2`; `devin plugins info xmemo` showed four skills and MCP `xmemo`. Devin Cloud Personal showed **Xmemo Installed · 4 skills, 1 MCP**; details showed version `1.0.0-rc.2`, developer `Yonro`, license `MIT`, MCP enabled. |
+| 1. Installation | **PASS** | Local install reported `xmemo v1.0.0-rc.2`; `devin plugins info xmemo` showed four skills and MCP `xmemo`. Devin Cloud Personal showed **Xmemo Installed · 4 skills, 1 MCP**; details showed version `1.0.0-rc.2`, developer `XMemo`, license `MIT`, MCP enabled. |
 | 2. Activation & OAuth | **PASS** | CLI OAuth consent and Devin Cloud callback both displayed exactly `memory:read`, `memory:write`, `knowledge:read`, `knowledge:write`; Personal scope was used. CLI credentials were later removed with `devin mcp logout xmemo` for cleanup. |
 | 3. Tool discovery & identity | **PARTIAL** | Live Devin discovery returned `get_mcp_identity`, `remember`, `update_state`, `recall`, `recall_context`, `read_memory`, and other public tools. It confirmed `search_memory` and `get_state` are absent. The generic `mcp_call_tool` wrapper emitted malformed calls missing `server_name`; direct tool calls worked. A post-cleanup identity call could not complete because the CLI token had been intentionally logged out. |
 | 4. Read & write | **PASS** | Direct Devin `remember` wrote the synthetic amber-lighthouse fact; `update_state` returned receipt `3913d1b6-49e0-4a2d-ae46-ed78e023fdb1`; a separate Devin process recalled the fact and checkpoint. The canonical semantic memory was `bcbc0b55-180a-4df8-88d2-d38fda686795`. |
