@@ -1,8 +1,32 @@
 # XMemo for Devin - Acceptance Test Guide
 
-**Plugin SHA:** [Fill after commit]
-**Devin Version:** [Fill during test]
-**Test Date:** [Fill during test]
+**Plugin SHA:** `8369d9981da82ac132fbaf0c5db148464a753e8d`
+**Devin Version:** `devin 3000.10.48 (fcf7ba39)`
+**Test Date:** `2026-10-13 (Asia/Tokyo)`
+
+## Executed acceptance record
+
+This record reports the real Devin CLI and Devin Cloud Personal checks executed for this release candidate. It distinguishes verified behavior from checks that require a second account or provider-side administrative control.
+
+| Step | Result | Evidence |
+|---|---|---|
+| 1. Installation | **PASS** | Local install reported `xmemo v1.0.0-rc.2`; `devin plugins info xmemo` showed four skills and MCP `xmemo`. Devin Cloud Personal showed **Xmemo Installed · 4 skills, 1 MCP**; details showed version `1.0.0-rc.2`, developer `Yonro`, license `MIT`, MCP enabled. |
+| 2. Activation & OAuth | **PASS** | CLI OAuth consent and Devin Cloud callback both displayed exactly `memory:read`, `memory:write`, `knowledge:read`, `knowledge:write`; Personal scope was used. CLI credentials were later removed with `devin mcp logout xmemo` for cleanup. |
+| 3. Tool discovery & identity | **PARTIAL** | Live Devin discovery returned `get_mcp_identity`, `remember`, `update_state`, `recall`, `recall_context`, `read_memory`, and other public tools. It confirmed `search_memory` and `get_state` are absent. The generic `mcp_call_tool` wrapper emitted malformed calls missing `server_name`; direct tool calls worked. A post-cleanup identity call could not complete because the CLI token had been intentionally logged out. |
+| 4. Read & write | **PASS** | Direct Devin `remember` wrote the synthetic amber-lighthouse fact; `update_state` returned receipt `3913d1b6-49e0-4a2d-ae46-ed78e023fdb1`; a separate Devin process recalled the fact and checkpoint. The canonical semantic memory was `bcbc0b55-180a-4df8-88d2-d38fda686795`. |
+| 5. Session resume & Git check | **PARTIAL** | Cross-process recall was verified. A complete skill-driven Git staleness reconciliation was not completed because the installed CLI session lost its OAuth token during cleanup; no stale-state claim is made. |
+| 6. Handoff | **PARTIAL** | Package exposes `xmemo-handoff`; summary-only invocation was started with a no-write instruction, but the CLI session did not return a verifiable package before timeout. Partial-write semantics remain unverified. |
+| 7. User & workspace isolation | **BLOCKED** | A second Devin/XMemo account was not available in this environment, so no cross-user access attempt was performed. |
+| 8. Revocation & reconnection | **PARTIAL** | Local credential revocation was verified (`devin mcp logout xmemo` removed OAuth credentials). Provider-side grant revocation and a fresh post-revocation consent were not independently verifiable from the available XMemo account controls. |
+| 9. Cleanup & screenshots | **PASS** | Both exact synthetic records were soft-deleted and the scoped recall no longer returned either record. No credentials were added to the repository; package validation, unit tests, and CI passed. OAuth consent and Cloud plugin detail screenshots were captured in the task evidence directory. |
+
+**Overall result:** **BLOCKED for GA/marketplace submission** until steps 5–8 have complete evidence, especially two-user isolation and provider-side revocation/reconnection.
+
+### Verified runtime facts
+
+- Direct MCP calls are usable in Devin; the generic `mcp_call_tool` compatibility wrapper is currently unreliable because it omits `server_name` for some calls.
+- The live server surface uses `recall`/`recall_context` instead of the guide's legacy `search_memory`/`get_state` names.
+- Synthetic cleanup used recoverable `soft_delete` only for the exact semantic and working-state IDs created by this run.
 
 ## Prerequisites
 
@@ -15,7 +39,7 @@
 
 ## Test Case 1: Installation
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PASS
 
 ### Steps
 1. Navigate to plugin directory
@@ -40,7 +64,7 @@
 
 ## Test Case 2: Activation & OAuth
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PASS
 
 ### Steps
 1. Start a new Devin session: `devin session`
@@ -73,7 +97,7 @@
 
 ## Test Case 3: Tool Discovery & Identity
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PARTIAL
 
 ### Steps
 1. In the Devin session, invoke: `Use the mcp_call_tool to list available tools on xmemo server`
@@ -108,7 +132,7 @@
 
 ## Test Case 4: Read & Write Operations
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PASS
 
 ### Steps
 1. Create a synthetic test fact: "xmemo-acceptance-test: timestamp=[current time], test_id=unique_id"
@@ -137,7 +161,7 @@
 
 ## Test Case 5: Session Resume & Git Check
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PARTIAL
 
 ### Steps
 1. Save a checkpoint in current session
@@ -165,7 +189,7 @@
 
 ## Test Case 6: Handoff Between Agents
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PARTIAL
 
 ### Steps
 1. Save a checkpoint with pending work
@@ -194,7 +218,7 @@
 
 ## Test Case 7: User & Workspace Isolation
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** BLOCKED
 
 ### Prerequisites
 - Two separate Devin accounts (test-user-1, test-user-2)
@@ -226,7 +250,7 @@
 
 ## Test Case 8: Revocation & Reconnection
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PARTIAL
 
 ### Steps
 1. Use active session to save a test record
@@ -255,7 +279,7 @@
 
 ## Test Case 9: Cleanup & Screenshots
 
-**Status:** ___ PASS / FAIL / BLOCKED
+**Status:** PASS
 
 ### Steps
 1. Capture screenshots (redact any tokens/personal data):
@@ -289,37 +313,37 @@
 
 | Test Case | Status | Notes |
 |-----------|--------|-------|
-| 1. Installation | ___ | |
-| 2. Activation & OAuth | ___ | |
-| 3. Tool Discovery | ___ | |
-| 4. Read & Write | ___ | |
-| 5. Session Resume | ___ | |
-| 6. Handoff | ___ | |
-| 7. Isolation | ___ | |
-| 8. Revocation | ___ | |
-| 9. Cleanup | ___ | |
+| 1. Installation | PASS | Local and Cloud Personal verified |
+| 2. Activation & OAuth | PASS | CLI and Cloud consent scopes verified |
+| 3. Tool Discovery | PARTIAL | Live tools verified; wrapper/identity follow-up remains |
+| 4. Read & Write | PASS | Direct write, checkpoint, and new-session recall verified |
+| 5. Session Resume | PARTIAL | Cross-process recall verified; Git staleness flow incomplete |
+| 6. Handoff | PARTIAL | Skill present; verifiable package/partial-write evidence incomplete |
+| 7. Isolation | BLOCKED | Second account unavailable |
+| 8. Revocation | PARTIAL | Local logout verified; provider revocation unavailable |
+| 9. Cleanup | PASS | Exact synthetic records soft-deleted and checked |
 
-**Overall Result:** ___ PASS / FAIL / BLOCKED
+**Overall Result:** BLOCKED
 
 **Blockers:**
 - [ ] If any test is BLOCKED, document why
 - [ ] If any test is FAIL, document the failure and root cause
 
 **Recommendation:**
-- ___ Ready for GA and marketplace submission
-- ___ Needs fixes before submission
-- ___ Cannot proceed without resolving blockers
+- [ ] Ready for GA and marketplace submission
+- [x] Needs fixes before submission
+- [x] Cannot proceed without resolving blockers
 
 ---
 
 ## Notes for Marketplace PR
 
-- Plugin commit SHA: [Fill after committing all changes]
-- Tested Devin version: [Fill]
-- Test date: [Fill]
-- All test cases passed: [Yes/No]
-- Screenshots attached: [Yes/No]
-- Cleanup verified: [Yes/No]
+- Plugin commit SHA: `8369d9981da82ac132fbaf0c5db148464a753e8d`
+- Tested Devin version: `3000.10.48 (fcf7ba39)`
+- Test date: `2026-10-13`
+- All test cases passed: **No; 7–8 are incomplete and 3, 5–6 are partial**
+- Screenshots attached: **Yes, task evidence directory**
+- Cleanup verified: **Yes, exact synthetic records soft-deleted**
 
 **Do not open marketplace PR until:**
 1. All test cases pass

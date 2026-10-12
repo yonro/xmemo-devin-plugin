@@ -6,7 +6,7 @@ project record, knowledge item, token, cookie, or credential is included.
 ## Environment
 
 - Devin CLI `3000.10.48 (fcf7ba39)` on Windows.
-- Plugin revision tested: `dbbcc524dead48a2508f6bb71fe73e954f00f2dd` (rc.2).
+- Plugin revision tested: `8369d9981da82ac132fbaf0c5db148464a753e8d` (rc.2).
 - Cloud Personal scope: plugin showed **Enabled**, 4 skills, 1 MCP after reindex.
 - CLI OAuth callback: localhost. Cloud OAuth callback: `api.devin.ai`.
 - Consent showed four scopes: memory read/write and knowledge read/write.
@@ -23,10 +23,12 @@ project record, knowledge item, token, cookie, or credential is included.
 | Scope discipline | PASS | Recall was restricted to the exact synthetic path. No knowledge tools or unrelated MCP servers were used. |
 | Generic wrapper | FAIL / compatibility issue | Devin's `mcp_call_tool` wrapper repeatedly emitted malformed calls missing `server_name` for `remember`/`update_state`. Direct `mcp__xmemo__remember` and `mcp__xmemo__update_state` worked. The plugin policy therefore must route through live direct tools, not the wrapper. |
 | Local credential removal | PASS | `devin mcp logout xmemo` removed local OAuth credentials. This does not prove provider-side grant revocation. |
-| Provider revocation | BLOCKED | No provider-side revoke was performed because the XMemo account UI was not used to delete the grant. Old-token rejection therefore remains unverified. |
+| Provider revocation | PARTIAL | Local CLI credentials were removed; provider-side grant revocation and old-token rejection remain unverified. |
 | Two-user isolation | BLOCKED | A second separately authorized synthetic identity was not available. |
 
-The direct-memory read returned a different canonical ID than the initial
+The exact synthetic semantic and working-state records were later soft-deleted
+through XMemo's recoverable delete operation, and a scoped recall no longer
+returned either record. The direct-memory read returned a different canonical ID than the initial
 receipt ID. This is preserved as observed behavior and is not treated as a
 plugin success bug without server-side correlation evidence. The test did not
 create additional records after the successful direct write.
