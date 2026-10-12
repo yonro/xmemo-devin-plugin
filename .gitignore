@@ -1,0 +1,6 @@
+# Generated artifacts and local credentials
+__pycache__/
+*.pyc
+.env
+.env.*
+dist/
