@@ -1,6 +1,6 @@
 # XMemo for Devin - Acceptance Test Guide
 
-**Plugin SHA:** `264bfdc`
+**Plugin SHA:** `b15681d`
 **Devin Version:** `devin 3000.11.3 (9c803229faa4)`
 **Test Date:** `2026-10-13 (Asia/Tokyo)`
 
@@ -15,12 +15,12 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 | 3. Tool discovery & identity | **PARTIAL** | Devin Cloud's built-in MCP test completed successfully and discovered 34 enabled tools, including `get_mcp_identity`, `remember`, `update_state`, `recall`, `recall_context`, `read_memory`, and the XMemo HTML resources. A fresh Devin CLI `get_mcp_identity` call also succeeded and returned the public connection surface. The CLI discovery confirmed `search_memory` and `get_state` are absent. The generic `mcp_call_tool` wrapper emitted malformed calls missing `server_name`; direct tool calls worked. |
 | 4. Read & write | **PASS** | Direct Devin `remember` wrote the synthetic amber-lighthouse fact; `update_state` returned receipt `3913d1b6-49e0-4a2d-ae46-ed78e023fdb1`; a separate Devin process recalled the fact and checkpoint. The canonical semantic memory was `bcbc0b55-180a-4df8-88d2-d38fda686795`. |
 | 5. Session resume & Git check | **PASS** | A synthetic checkpoint was saved through Devin CLI, then an empty Git commit `3722ddb3e989d7276a7a09cbf18eeb26cbd000df` was created. A new Devin CLI resume run marked the checkpoint **STALE**, reported the current commit and clean working tree, identified the exact discrepancy, and requested reconciliation instead of repeating outdated state. |
-| 6. Handoff | **PARTIAL** | Package exposes `xmemo-handoff`; two summary-only CLI invocations were started with explicit zero-write instructions but timed out before returning a verifiable package. Partial-write semantics remain unverified. |
-| 7. User & workspace isolation | **BLOCKED** | A second Devin/XMemo account was not available in this environment, so no cross-user access attempt was performed. |
+| 6. Handoff | **PARTIAL** | Package exposes `xmemo-handoff`; two summary-only CLI invocations were started with explicit zero-write instructions but timed out before returning a verifiable package. Devin CLI logs identify the Cloud bridge failure as `out_of_quota` / organization billing state, not an XMemo MCP response error. Partial-write semantics remain unverified. |
+| 7. User & workspace isolation | **PASS** | A second XMemo API key created a synthetic record under a separate account. The active Devin account returned `NOT_FOUND` for an exact recall and its cross-account `forget` attempt was denied. The second-account record was then soft-deleted with the second account, and no credentials were written to the repository. |
 | 8. Revocation & reconnection | **PARTIAL** | Local credential revocation was verified (`devin mcp logout xmemo` removed OAuth credentials). Provider-side grant revocation and a fresh post-revocation consent were not independently verifiable from the available XMemo account controls. |
 | 9. Cleanup & screenshots | **PASS** | Both exact synthetic records were soft-deleted and the scoped recall no longer returned either record. No credentials were added to the repository; package validation, unit tests, and CI passed. OAuth consent and Cloud plugin detail screenshots were captured in the task evidence directory. |
 
-**Overall result:** **BLOCKED for GA/marketplace submission** until steps 5–8 have complete evidence, especially two-user isolation and provider-side revocation/reconnection.
+**Overall result:** **BLOCKED for GA/marketplace submission** until handoff and provider-side revocation/reconnection have complete evidence.
 
 ### Verified runtime facts
 
@@ -29,6 +29,8 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 - A fresh Devin CLI identity call succeeded against the authorized XMemo connection.
 - The live server surface uses `recall`/`recall_context` instead of the guide's legacy `search_memory`/`get_state` names.
 - `xmemo-resume` correctly marked the synthetic checkpoint stale after Git commit `3722ddb` and produced a reconciliation report without writing records.
+- Dual-account isolation was verified: cross-account recall returned no match and cross-account mutation was denied.
+- Devin CLI logs attribute handoff timeout to the Devin Cloud bridge's organization quota/billing state; the logs do not show an XMemo server handoff failure.
 - Synthetic cleanup used recoverable `soft_delete` only for the exact semantic and working-state IDs created by this run.
 
 ## Prerequisites
@@ -221,7 +223,7 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 
 ## Test Case 7: User & Workspace Isolation
 
-**Status:** BLOCKED
+**Status:** PASS
 
 ### Prerequisites
 - Two separate Devin accounts (test-user-1, test-user-2)
@@ -322,14 +324,15 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 | 4. Read & Write | PASS | Direct write, checkpoint, and new-session recall verified |
 | 5. Session Resume | PARTIAL | Cross-process recall verified; Git staleness flow incomplete |
 | 6. Handoff | PARTIAL | Skill present; verifiable package/partial-write evidence incomplete |
-| 7. Isolation | BLOCKED | Second account unavailable |
+| 7. Isolation | PASS | Separate synthetic record was invisible and immutable from the active Devin account |
 | 8. Revocation | PARTIAL | Local logout verified; provider revocation unavailable |
 | 9. Cleanup | PASS | Exact synthetic records soft-deleted and checked |
 
 **Overall Result:** BLOCKED
 
 **Blockers:**
-- [ ] If any test is BLOCKED, document why
+- [ ] Handoff package/partial-write evidence is still unavailable because Devin Cloud bridge reports organization `out_of_quota`.
+- [ ] Provider-side OAuth grant revocation and reconnection remain unavailable from the current account controls.
 - [ ] If any test is FAIL, document the failure and root cause
 
 **Recommendation:**
@@ -341,10 +344,10 @@ This record reports the real Devin CLI and Devin Cloud Personal checks executed 
 
 ## Notes for Marketplace PR
 
-- Plugin commit SHA: `264bfdc`
+- Plugin commit SHA: `b15681d`
 - Tested Devin version: `3000.11.3 (9c803229faa4)`
 - Test date: `2026-10-13`
-- All test cases passed: **No; 7–8 are incomplete and 3, 5–6 are partial**
+- All test cases passed: **No; 6 and 8 remain incomplete and 3 is partial**
 - Screenshots attached: **Yes, task evidence directory**
 - Cleanup verified: **Yes, exact synthetic records soft-deleted**
 
