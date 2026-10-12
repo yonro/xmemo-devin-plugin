@@ -3,13 +3,19 @@
   "version": "1.0.0-rc.2",
   "description": "Durable project memory and cross-agent continuity for Devin through XMemo's hosted MCP service.",
   "author": {
-    "name": "Yonro"
+    "name": "XMemo",
+    "email": "support@xmemo.dev",
+    "url": "https://xmemo.dev"
   },
   "homepage": "https://xmemo.dev",
   "repository": "https://github.com/yonro/xmemo-devin-plugin",
   "license": "MIT",
   "logo": "logo.png",
-  "keywords": ["Essentials", "Development Tools", "Productivity"],
+  "keywords": [
+    "Essentials",
+    "Development Tools",
+    "Productivity"
+  ],
   "mcpServers": {
     "xmemo": {
       "url": "https://xmemo.dev/mcp"
